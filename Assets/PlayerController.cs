@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
     public float jmp;
     bool onfloor;
 
+    float parryCooldown = 0;
+    float parryTimer = 0;
+    bool parrying = false;
+
     // Use this for initialization
     void Start()
     {
@@ -40,6 +44,28 @@ public class PlayerController : MonoBehaviour
             onfloor = false;
         }
         RB.velocity = move;
+
+        if(Input.GetKeyDown(KeyCode.C) && parryCooldown <= 0)
+        {
+            parrying = true;
+            parryTimer = 0.5f;
+            parryCooldown = 1.5f;
+            GetComponent<SpriteRenderer>().color = Color.green; //replace with sprites
+        }
+        
+        if(parryCooldown > 0)
+        {
+            parryCooldown -= Time.deltaTime;
+        }
+        if(parryTimer > 0)
+        {
+            parryTimer -= Time.deltaTime;
+        }
+        else if (parryTimer <= 0)
+        {
+            parrying = false;
+            GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
+        }
     }
 
     void OnCollisionEnter2D (Collision2D other)
@@ -48,6 +74,22 @@ public class PlayerController : MonoBehaviour
         {
             onfloor = true;
         }
+    }
+
+    public bool attacked()
+    {
+        if(parrying)
+        {
+            parrying = false;
+            GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
+            return true;
+        }
+        else
+        {
+            //Take Damage
+            return false;
+        }
+
     }
 }
 
