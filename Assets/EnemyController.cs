@@ -7,8 +7,9 @@ public class EnemyController : MonoBehaviour {
     Rigidbody2D RB;
     public PlayerController player;
     public EnemyHurtbox attackBox;
+    public GameManager manager;
 
-    public int state = 0; //0 is idle, 1 is windup, 2 is attacking, 3 is staggered
+    public int state = 0; //0 is idle, 1 is windup, 2 is attacking, 3 is staggered, 4 is death animation
     public int health = 3;
     float windup = 0.5f;
     float backswing = 0.3f;
@@ -17,13 +18,16 @@ public class EnemyController : MonoBehaviour {
     int totalMotion = 0;
     public int type = 0;
 
+    public GameObject blood;
+
 	// Use this for initialization
 	void Start () {
         RB = GetComponent<Rigidbody2D>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        manager = GameObject.FindObjectOfType<GameManager>();
+    }
+
+    // Update is called once per frame
+    void Update() {
 
         if (state == 0 && recovery <= 0)
         {
@@ -108,10 +112,19 @@ public class EnemyController : MonoBehaviour {
             GetComponent<SpriteRenderer>().color = Color.white;
             recovery = 1f;
         }
+
+        if (state == 4 && recovery > 0)
+        {
+            recovery -= Time.deltaTime;
+        }
+        else if (state == 4 && recovery <= 0)
+        {
+            manager.removeEnemy(this);
+        }
 		
 	}
 
-    void hit ()
+    public bool hit()
     {
         //Lowers health when hit, does more damage when staggered
         if(state == 3)
@@ -125,6 +138,17 @@ public class EnemyController : MonoBehaviour {
                 health -= 1;
             }
         }
+        if(health <= 0)
+        {
+            Instantiate(blood, new Vector3(transform.position.x+(Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
+            Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
+            Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
+            state = 4;
+            //CHANGE SPRITE TO DYING ANIMATION HERE
+            recovery = 1f;
+            return true;
+        }
+        return false;
     }
 
     void typeSet (int t)

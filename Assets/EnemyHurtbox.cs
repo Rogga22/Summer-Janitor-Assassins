@@ -14,7 +14,7 @@ public class EnemyHurtbox : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log(parent.state);
+        //Debug.Log(parent.state);
 	}
 
     void OnTriggerEnter2D(Collider2D col)
