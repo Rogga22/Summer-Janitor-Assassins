@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
+    public int messiness = 0;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -16,6 +18,6 @@ public class GameManager : MonoBehaviour {
 
     public void removeEnemy(EnemyController e)
     {
-        Destroy(e);
+
     }
 }

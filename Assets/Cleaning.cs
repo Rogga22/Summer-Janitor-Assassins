@@ -6,38 +6,38 @@ public class Cleaning : MonoBehaviour {
 
     public PlayerController play;
     bool iscleaning;
-    int enemiesInRange = 0; //Detects how many enemies are within the hurtbox
     public LayerMask enemyHitbox;
+    GameManager manager;
 
     void Start()
     {
+        manager = GameObject.FindObjectOfType<GameManager>();
         iscleaning = false;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X)) //Does an attack if enemies are in range, and cleans if not
+        if (Input.GetKeyDown(KeyCode.X)) //Does an attack, put attack animation in here
         {
-            if (enemiesInRange > 0)
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
+            Debug.Log("attack");
+            foreach (Collider2D c in colliders)
             {
-                Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
-                Debug.Log("attack");
-                foreach (Collider2D c in colliders)
+                EnemyController enemy = c.gameObject.GetComponent<EnemyController>();
+                if (enemy != null)
                 {
-                    EnemyController enemy = c.gameObject.GetComponent<EnemyController>();
-                    if (enemy.hit())
-                    {
-                        enemiesInRange--;
-                    }
+                    enemy.hit();
                 }
             }
-            else
-            {
+        }
+
+        if(Input.GetKeyDown(KeyCode.V)) //activates cleaning, needs animation
+        {
                 play.movespd = play.slowspd;
                 iscleaning = true;
-            }
         }
-        if (Input.GetKeyUp(KeyCode.X))
+
+        if (Input.GetKeyUp(KeyCode.V))
         {
             play.movespd = play.maxspd;
             iscleaning = false;
@@ -49,25 +49,11 @@ public class Cleaning : MonoBehaviour {
         if (other.gameObject.tag == "Blood" && iscleaning)
         {
             other.transform.localScale -= new Vector3(.01f, .01f, 0);
-            if(other.transform.localScale.x <= 0.1f)
+            if (other.transform.localScale.x <= 0.1f)
+            {
                 Destroy(other.gameObject);
-        }
-    }
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.tag == "Enemy")
-        {
-            Debug.Log("in range");
-            enemiesInRange += 1;
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D col)
-    {
-        if (col.gameObject.tag == "Enemy")
-        {
-            enemiesInRange -= 1;
+                manager.messiness--;
+            }
         }
     }
 }

@@ -24,6 +24,7 @@ public class EnemyController : MonoBehaviour {
 	void Start () {
         RB = GetComponent<Rigidbody2D>();
         manager = GameObject.FindObjectOfType<GameManager>();
+        player = GameObject.FindObjectOfType<PlayerController>();
     }
 
     // Update is called once per frame
@@ -35,13 +36,13 @@ public class EnemyController : MonoBehaviour {
 
             //Vector2 move = RB.velocity;
             int freeWill = (int)Random.Range(0f, 500f);
-            if (freeWill >= 496)
+            if (freeWill >= 492)
             {
                 state = 1;
                 windup = 0.6f;
                 GetComponent<SpriteRenderer>().color = Color.magenta;
             }
-            else if (freeWill >= 491 && totalMotion < 4)
+            else if (freeWill >= 487 && totalMotion < 4)
             {
                 //move.x = Mathf.Lerp(move.x, 50, 0.1f);
                 //Debug.Log("Moving left");
@@ -49,7 +50,7 @@ public class EnemyController : MonoBehaviour {
                 totalMotion++;
                 recovery = 0.3f;
             }
-            else if (freeWill >= 488 && totalMotion > -4)
+            else if (freeWill >= 484 && totalMotion > -4)
             {
                 //move.x = Mathf.Lerp(move.x, -50, 0.1f);
                 //Debug.Log("Moving right");
@@ -119,12 +120,12 @@ public class EnemyController : MonoBehaviour {
         }
         else if (state == 4 && recovery <= 0)
         {
-            manager.removeEnemy(this);
+            Destroy(gameObject);
         }
 		
 	}
 
-    public bool hit()
+    public void hit()
     {
         //Lowers health when hit, does more damage when staggered
         if(state == 3)
@@ -135,20 +136,20 @@ public class EnemyController : MonoBehaviour {
         {
             if (type != 1)
             {
-                health -= 1;
+                health -= 1; //Have them go into a very short flinch animation or something
             }
+            //Have them go into a very short blocking animation
         }
         if(health <= 0)
         {
             Instantiate(blood, new Vector3(transform.position.x+(Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
             Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
             Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
+            manager.messiness += 3;
             state = 4;
             //CHANGE SPRITE TO DYING ANIMATION HERE
             recovery = 1f;
-            return true;
         }
-        return false;
     }
 
     void typeSet (int t)

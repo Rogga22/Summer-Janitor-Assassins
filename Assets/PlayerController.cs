@@ -16,62 +16,67 @@ public class PlayerController : MonoBehaviour
     float parryTimer = 0;
     bool parrying = false;
 
+    bool lose = false;
+
     // Use this for initialization
     void Start()
     {
         RB = GetComponent<Rigidbody2D>();
         movespd = maxspd;
         slowspd = maxspd * .2f;
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 move = RB.velocity;
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (!lose)
         {
-            if (move.x > 0)
-                move.x = 0;
-            move.x = Mathf.Lerp(move.x, -movespd, 0.1f);
-            transform.localRotation = Quaternion.Euler(0, 180, 0);
-        }
-        else if (Input.GetKey(KeyCode.RightArrow))
-        {
-            if (move.x < 0)
-                move.x = 0;
-            move.x = Mathf.Lerp(move.x, movespd, 0.1f);
-            transform.localRotation = Quaternion.Euler(0, 0, 0);
-        }
-        else
-            move.x = Mathf.Lerp(move.x, 0, 0.1f);
-        if (Input.GetKeyDown(KeyCode.Z) && onfloor == true)
-        {
-            move.y = jmp;
-            onfloor = false;
-        }
-        RB.velocity = move;
+            Vector2 move = RB.velocity;
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                if (move.x > 0)
+                    move.x = 0;
+                move.x = Mathf.Lerp(move.x, -movespd, 0.1f);
+                transform.localRotation = Quaternion.Euler(0, 180, 0);
+            }
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                if (move.x < 0)
+                    move.x = 0;
+                move.x = Mathf.Lerp(move.x, movespd, 0.1f);
+                transform.localRotation = Quaternion.Euler(0, 0, 0);
+            }
+            else
+                move.x = Mathf.Lerp(move.x, 0, 0.1f);
+            if (Input.GetKeyDown(KeyCode.Z) && onfloor == true)
+            {
+                move.y = jmp;
+                onfloor = false;
+            }
+            RB.velocity = move;
 
-        if(Input.GetKeyDown(KeyCode.C) && parryCooldown <= 0)
-        {
-            parrying = true;
-            parryTimer = 0.5f;
-            parryCooldown = 1.5f;
-            GetComponent<SpriteRenderer>().color = Color.green; //replace with sprites
-        }
-        
-        if(parryCooldown > 0)
-        {
-            parryCooldown -= Time.deltaTime;
-        }
-        if(parryTimer > 0)
-        {
-            parryTimer -= Time.deltaTime;
-        }
-        else if (parryTimer <= 0)
-        {
-            parrying = false;
-            GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
+            if (Input.GetKeyDown(KeyCode.C) && parryCooldown <= 0)
+            {
+                parrying = true;
+                parryTimer = 0.5f;
+                parryCooldown = 1.5f;
+                GetComponent<SpriteRenderer>().color = Color.green; //replace with sprites
+            }
+
+            if (parryCooldown > 0)
+            {
+                parryCooldown -= Time.deltaTime;
+            }
+            if (parryTimer > 0)
+            {
+                parryTimer -= Time.deltaTime;
+            }
+            else if (parryTimer <= 0)
+            {
+                parrying = false;
+                GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
+            }
         }
     }
 
@@ -93,7 +98,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            //Take Damage
+            GetComponent<SpriteRenderer>().color = Color.red; //replace with death sprite
+            lose = true;
             return false;
         }
 
