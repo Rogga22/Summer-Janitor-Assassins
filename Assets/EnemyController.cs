@@ -154,6 +154,7 @@ public class EnemyController : MonoBehaviour {
                 Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
                 manager.messiness += 3;
                 state = 4;
+                transform.gameObject.tag = "Trash";
                 //CHANGE SPRITE TO DYING ANIMATION HERE
                 sound.PlayOneShot(slain);
             }

@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
 
     float parryCooldown = 0;
     float parryTimer = 0;
-    bool parrying = false;
+    public bool parrying = false;
 
     public bool lose = false;
 

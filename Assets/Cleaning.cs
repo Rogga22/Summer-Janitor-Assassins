@@ -17,7 +17,7 @@ public class Cleaning : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X)) //Does an attack, put attack animation in here
+        if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
             Debug.Log("attack");
