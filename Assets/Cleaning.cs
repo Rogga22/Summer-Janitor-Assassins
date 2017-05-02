@@ -21,7 +21,7 @@ public class Cleaning : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X)) //Does an attack, put attack animation in here
+        if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
             Debug.Log("attack");
@@ -114,16 +114,3 @@ public class Cleaning : MonoBehaviour {
         }
     }
 }
-
-        if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
-        {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
-            Debug.Log("attack");
-            foreach (Collider2D c in colliders)
-            {
-                EnemyController enemy = c.gameObject.GetComponent<EnemyController>();
-                if (enemy != null)
-                {
-                    enemy.hit();
-                }
-            }
