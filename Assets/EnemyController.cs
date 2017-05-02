@@ -22,10 +22,15 @@ public class EnemyController : MonoBehaviour {
 
     public AudioClip struck;
     public AudioClip slain;
+    public AudioClip blocked;
     private AudioSource sound;
 
 	// Use this for initialization
 	void Start () {
+        if (type == 2)
+        {
+            health = 15;
+        }
         RB = GetComponent<Rigidbody2D>();
         manager = GameObject.FindObjectOfType<GameManager>();
         player = GameObject.FindObjectOfType<PlayerController>();
@@ -40,28 +45,57 @@ public class EnemyController : MonoBehaviour {
             Vector3 where = transform.position;
 
             //Vector2 move = RB.velocity;
-            int freeWill = (int)Random.Range(0f, 500f);
-            if (freeWill >= 492)
+            if (type == 2)
             {
-                state = 1;
-                windup = 0.6f;
-                GetComponent<SpriteRenderer>().color = Color.magenta;
+                int freeWill = (int)Random.Range(0f, 500f);
+                if (freeWill >= 482)
+                {
+                    state = 1;
+                    windup = 0.6f;
+                    GetComponent<SpriteRenderer>().color = Color.magenta;
+                }
+                else if (freeWill >= 477 && totalMotion < 4)
+                {
+                    //move.x = Mathf.Lerp(move.x, 50, 0.1f);
+                    //Debug.Log("Moving left");
+                    where += new Vector3(0.2f, 0, 0);
+                    totalMotion++;
+                    recovery = 0.3f;
+                }
+                else if (freeWill >= 474 && totalMotion > -4)
+                {
+                    //move.x = Mathf.Lerp(move.x, -50, 0.1f);
+                    //Debug.Log("Moving right");
+                    where += new Vector3(-0.2f, 0, 0);
+                    totalMotion--;
+                    recovery = 0.3f;
+                }
             }
-            else if (freeWill >= 487 && totalMotion < 4)
+            else
             {
-                //move.x = Mathf.Lerp(move.x, 50, 0.1f);
-                //Debug.Log("Moving left");
-                where += new Vector3(0.2f, 0, 0);
-                totalMotion++;
-                recovery = 0.3f;
-            }
-            else if (freeWill >= 484 && totalMotion > -4)
-            {
-                //move.x = Mathf.Lerp(move.x, -50, 0.1f);
-                //Debug.Log("Moving right");
-                where += new Vector3(-0.2f, 0, 0);
-                totalMotion--;
-                recovery = 0.3f;
+                int freeWill = (int)Random.Range(0f, 500f);
+                if (freeWill >= 492)
+                {
+                    state = 1;
+                    windup = 0.6f;
+                    GetComponent<SpriteRenderer>().color = Color.magenta;
+                }
+                else if (freeWill >= 487 && totalMotion < 4)
+                {
+                    //move.x = Mathf.Lerp(move.x, 50, 0.1f);
+                    //Debug.Log("Moving left");
+                    where += new Vector3(0.2f, 0, 0);
+                    totalMotion++;
+                    recovery = 0.3f;
+                }
+                else if (freeWill >= 484 && totalMotion > -4)
+                {
+                    //move.x = Mathf.Lerp(move.x, -50, 0.1f);
+                    //Debug.Log("Moving right");
+                    where += new Vector3(-0.2f, 0, 0);
+                    totalMotion--;
+                    recovery = 0.3f;
+                }
             }
             transform.position = where;
         }
@@ -132,18 +166,21 @@ public class EnemyController : MonoBehaviour {
 
     public void hit()
     {
+        bool successful = false;
         if (state != 4 && !player.lose)
         {
             //Lowers health when hit, does more damage when staggered
             if (state == 3)
             {
                 health -= 3;
+                successful = true;
             }
             else
             {
-                if (type != 1)
+                if (type == 0)
                 {
                     health -= 1; //Have them go into a very short flinch animation or something
+                    successful = true;
                 }
                 //Have them go into a very short blocking animation
             }
@@ -158,9 +195,13 @@ public class EnemyController : MonoBehaviour {
                 //CHANGE SPRITE TO DYING ANIMATION HERE
                 sound.PlayOneShot(slain);
             }
-            else
+            else if (successful)
             {
                 sound.PlayOneShot(struck);
+            }
+            else
+            {
+                sound.PlayOneShot(blocked);
             }
         }
     }
