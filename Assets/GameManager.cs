@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
     public int messiness = 0;
+    private Vector3 offset;
 
 	// Use this for initialization
 	void Start () {
@@ -16,8 +17,13 @@ public class GameManager : MonoBehaviour {
 		
 	}
 
-    public void removeEnemy(EnemyController e)
+    public void setOffset(Vector3 playerPos)
     {
+        offset = transform.position - playerPos;
+    }
 
+    public void move(Vector3 moving)
+    {
+        transform.position = moving + offset;
     }
 }

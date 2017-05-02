@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameManager manager;
 
     Rigidbody2D RB;
     public float maxspd;
@@ -26,9 +27,11 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         RB = GetComponent<Rigidbody2D>();
+        manager = GameObject.FindObjectOfType<GameManager>();
         movespd = maxspd;
         slowspd = maxspd * .2f;
         sound = GetComponent<AudioSource>();
+        manager.setOffset(transform.position);
     }
 
     // Update is called once per frame
@@ -81,6 +84,7 @@ public class PlayerController : MonoBehaviour
                 parrying = false;
                 GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
             }
+            manager.move(transform.position);
         }
     }
 
