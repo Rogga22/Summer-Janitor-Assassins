@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public float slowspd;
     public float jmp;
     public bool onfloor;
+    public bool faceRight = true;
 
     float parryCooldown = 0;
     float parryTimer = 0;
@@ -22,6 +23,20 @@ public class PlayerController : MonoBehaviour
     public AudioClip parrySound;
     public AudioClip deathSound;
     private AudioSource sound;
+
+    public Sprite idleLeft;
+    public Sprite idleRight;
+    public Sprite carryingLeft;
+    public Sprite carryingRight;
+    public Sprite dead;
+    public Sprite blockLeft;
+    public Sprite blockRight;
+    public Sprite attackLeft;
+    public Sprite attackRight;
+    public Sprite walkLeft;
+    public Sprite walkRight;
+    public Sprite cleanLeft;
+    public Sprite cleanRight;
 
     // Use this for initialization
     void Start()
@@ -42,6 +57,7 @@ public class PlayerController : MonoBehaviour
             Vector2 move = RB.velocity;
             if (Input.GetKey(KeyCode.LeftArrow))
             {
+                faceRight = false;
                 if (move.x > 0)
                     move.x = 0;
                 move.x = Mathf.Lerp(move.x, -movespd, 0.1f);
@@ -49,6 +65,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.RightArrow))
             {
+                faceRight = true;
                 if (move.x < 0)
                     move.x = 0;
                 move.x = Mathf.Lerp(move.x, movespd, 0.1f);
@@ -68,7 +85,14 @@ public class PlayerController : MonoBehaviour
                 parrying = true;
                 parryTimer = 0.5f;
                 parryCooldown = 1.5f;
-                GetComponent<SpriteRenderer>().color = Color.green; //replace with sprites
+                if (faceRight)
+                {
+                    GetComponent<SpriteRenderer>().sprite = blockRight;
+                }
+                else
+                {
+                    GetComponent<SpriteRenderer>().sprite = blockLeft;
+                }
             }
 
             if (parryCooldown > 0)
@@ -82,7 +106,14 @@ public class PlayerController : MonoBehaviour
             else if (parryTimer <= 0)
             {
                 parrying = false;
-                GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
+                if (faceRight)
+                {
+                    GetComponent<SpriteRenderer>().sprite = idleRight;
+                }
+                else
+                {
+                    GetComponent<SpriteRenderer>().sprite = idleLeft;
+                }
             }
             manager.move(transform.position);
         }
@@ -103,13 +134,20 @@ public class PlayerController : MonoBehaviour
             if (parrying)
             {
                 parrying = false;
-                GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
+                if (faceRight)
+                {
+                    GetComponent<SpriteRenderer>().sprite = idleRight;
+                }
+                else
+                {
+                    GetComponent<SpriteRenderer>().sprite = idleLeft;
+                }
                 sound.PlayOneShot(parrySound);
                 return true;
             }
             else
             {
-                GetComponent<SpriteRenderer>().color = Color.red; //replace with death sprite
+                GetComponent<SpriteRenderer>().sprite = dead;
                 lose = true;
                 sound.PlayOneShot(deathSound);
                 return false;

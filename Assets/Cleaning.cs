@@ -13,6 +13,8 @@ public class Cleaning : MonoBehaviour {
     public LayerMask enemyHitbox;
     GameManager manager;
 
+    float attackRecovery = 0;
+
     void Start()
     {
         manager = GameObject.FindObjectOfType<GameManager>();
@@ -21,8 +23,33 @@ public class Cleaning : MonoBehaviour {
 
     void Update()
     {
+        if(attackRecovery > 0)
+        {
+            attackRecovery -= Time.deltaTime;
+        }
+        else
+        {
+            if (play.faceRight)
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.idleRight;
+            }
+            else
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.idleLeft;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
         {
+            play.parrying = false;
+            if (play.faceRight)
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.attackRight;
+            }
+            else
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.attackLeft;
+            }
+            attackRecovery = 0.3f;
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
             Debug.Log("attack");
             foreach (Collider2D c in colliders)
@@ -39,17 +66,41 @@ public class Cleaning : MonoBehaviour {
         {
                 play.movespd = play.slowspd;
                 iscleaning = true;
+            if (play.faceRight)
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.cleanRight;
+            }
+            else
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.cleanLeft;
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.V))
         {
             play.movespd = play.maxspd;
             iscleaning = false;
+            if (play.faceRight)
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.idleRight;
+            }
+            else
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.idleLeft;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.S) && !iscleaning && !carrying)
         {
             carrying = true;
+            if (play.faceRight)
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.carryingRight;
+            }
+            else
+            {
+                play.GetComponent<SpriteRenderer>().sprite = play.carryingLeft;
+            }
         }
 
         if (carrying)

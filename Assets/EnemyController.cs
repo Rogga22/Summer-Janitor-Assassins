@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour {
     public EnemyHurtbox attackBox;
     public GameManager manager;
 
+    public bool left;
     public int state = 0; //0 is idle, 1 is windup, 2 is attacking, 3 is staggered, 4 is death animation
     public int health = 3;
     float windup = 0.5f;
@@ -24,6 +25,16 @@ public class EnemyController : MonoBehaviour {
     public AudioClip slain;
     public AudioClip blocked;
     private AudioSource sound;
+
+    public Sprite idleRight;
+    public Sprite idleLeft;
+    public Sprite windupRight;
+    public Sprite windupLeft;
+    public Sprite attackRight;
+    public Sprite attackLeft;
+    public Sprite staggerRight;
+    public Sprite staggerLeft;
+    public Sprite dead;
 
 	// Use this for initialization
 	void Start () {
@@ -52,7 +63,14 @@ public class EnemyController : MonoBehaviour {
                 {
                     state = 1;
                     windup = 0.6f;
-                    GetComponent<SpriteRenderer>().color = Color.magenta;
+                    if (!left)
+                    {
+                        GetComponent<SpriteRenderer>().sprite = windupRight;
+                    }
+                    else
+                    {
+                        GetComponent<SpriteRenderer>().sprite = windupLeft;
+                    }
                 }
                 else if (freeWill >= 477 && totalMotion < 4)
                 {
@@ -78,7 +96,14 @@ public class EnemyController : MonoBehaviour {
                 {
                     state = 1;
                     windup = 0.6f;
-                    GetComponent<SpriteRenderer>().color = Color.magenta;
+                    if (!left)
+                    {
+                        GetComponent<SpriteRenderer>().sprite = windupRight;
+                    }
+                    else
+                    {
+                        GetComponent<SpriteRenderer>().sprite = windupLeft;
+                    }
                 }
                 else if (freeWill >= 487 && totalMotion < 4)
                 {
@@ -113,7 +138,14 @@ public class EnemyController : MonoBehaviour {
             state = 2;
             backswing = 0.3f;
             alreadyHit = false;
-            GetComponent<SpriteRenderer>().color = Color.red;
+            if (!left)
+            {
+                GetComponent<SpriteRenderer>().sprite = attackRight;
+            }
+            else
+            {
+                GetComponent<SpriteRenderer>().sprite = attackLeft;
+            }
         }
 
         if (state == 2 && backswing > 0)
@@ -125,7 +157,14 @@ public class EnemyController : MonoBehaviour {
                 {
                     state = 3;
                     recovery = 0.75f;
-                    GetComponent<SpriteRenderer>().color = Color.blue;
+                    if (!left)
+                    {
+                        GetComponent<SpriteRenderer>().sprite = staggerRight;
+                    }
+                    else
+                    {
+                        GetComponent<SpriteRenderer>().sprite = staggerLeft;
+                    }
                     //Debug.Log("Parried");
                 }
                 else
@@ -138,7 +177,14 @@ public class EnemyController : MonoBehaviour {
         else if (state == 2 && backswing <= 0)
         {
             state = 0;
-            GetComponent<SpriteRenderer>().color = Color.white;
+            if (!left)
+            {
+                GetComponent<SpriteRenderer>().sprite = idleRight;
+            }
+            else
+            {
+                GetComponent<SpriteRenderer>().sprite = idleLeft;
+            }
             recovery = 1f;
         }
 
@@ -149,7 +195,14 @@ public class EnemyController : MonoBehaviour {
         else if (state == 3 && recovery <= 0)
         {
             state = 0;
-            GetComponent<SpriteRenderer>().color = Color.white;
+            if (!left)
+            {
+                GetComponent<SpriteRenderer>().sprite = idleRight;
+            }
+            else
+            {
+                GetComponent<SpriteRenderer>().sprite = idleLeft;
+            }
             recovery = 1f;
         }
 
@@ -191,6 +244,7 @@ public class EnemyController : MonoBehaviour {
                 Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
                 manager.messiness += 3;
                 state = 4;
+                GetComponent<SpriteRenderer>().sprite = dead;
                 transform.gameObject.tag = "Trash";
                 //CHANGE SPRITE TO DYING ANIMATION HERE
                 sound.PlayOneShot(slain);
