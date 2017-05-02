@@ -16,7 +16,11 @@ public class PlayerController : MonoBehaviour
     float parryTimer = 0;
     bool parrying = false;
 
-    bool lose = false;
+    public bool lose = false;
+
+    public AudioClip parrySound;
+    public AudioClip deathSound;
+    private AudioSource sound;
 
     // Use this for initialization
     void Start()
@@ -24,7 +28,7 @@ public class PlayerController : MonoBehaviour
         RB = GetComponent<Rigidbody2D>();
         movespd = maxspd;
         slowspd = maxspd * .2f;
-
+        sound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -90,19 +94,24 @@ public class PlayerController : MonoBehaviour
 
     public bool attacked()
     {
-        if(parrying)
+        if (!lose)
         {
-            parrying = false;
-            GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
-            return true;
+            if (parrying)
+            {
+                parrying = false;
+                GetComponent<SpriteRenderer>().color = Color.white; //replace with sprites
+                sound.PlayOneShot(parrySound);
+                return true;
+            }
+            else
+            {
+                GetComponent<SpriteRenderer>().color = Color.red; //replace with death sprite
+                lose = true;
+                sound.PlayOneShot(deathSound);
+                return false;
+            }
         }
-        else
-        {
-            GetComponent<SpriteRenderer>().color = Color.red; //replace with death sprite
-            lose = true;
-            return false;
-        }
-
+        return false;
     }
 }
 

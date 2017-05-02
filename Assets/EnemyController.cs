@@ -20,11 +20,16 @@ public class EnemyController : MonoBehaviour {
 
     public GameObject blood;
 
+    public AudioClip struck;
+    public AudioClip slain;
+    private AudioSource sound;
+
 	// Use this for initialization
 	void Start () {
         RB = GetComponent<Rigidbody2D>();
         manager = GameObject.FindObjectOfType<GameManager>();
         player = GameObject.FindObjectOfType<PlayerController>();
+        sound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -114,41 +119,48 @@ public class EnemyController : MonoBehaviour {
             recovery = 1f;
         }
 
-        if (state == 4 && recovery > 0)
+        /*if (state == 4 && recovery > 0)
         {
             recovery -= Time.deltaTime;
         }
         else if (state == 4 && recovery <= 0)
         {
             Destroy(gameObject);
-        }
+        }*/
 		
 	}
 
     public void hit()
     {
-        //Lowers health when hit, does more damage when staggered
-        if(state == 3)
+        if (state != 4 && !player.lose)
         {
-            health -= 3;
-        }
-        else
-        {
-            if (type != 1)
+            //Lowers health when hit, does more damage when staggered
+            if (state == 3)
             {
-                health -= 1; //Have them go into a very short flinch animation or something
+                health -= 3;
             }
-            //Have them go into a very short blocking animation
-        }
-        if(health <= 0)
-        {
-            Instantiate(blood, new Vector3(transform.position.x+(Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
-            Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
-            Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
-            manager.messiness += 3;
-            state = 4;
-            //CHANGE SPRITE TO DYING ANIMATION HERE
-            recovery = 1f;
+            else
+            {
+                if (type != 1)
+                {
+                    health -= 1; //Have them go into a very short flinch animation or something
+                }
+                //Have them go into a very short blocking animation
+            }
+            if (health <= 0)
+            {
+                Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
+                Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
+                Instantiate(blood, new Vector3(transform.position.x + (Random.Range(-1f, 1)), transform.position.y, transform.position.z), Quaternion.identity);
+                manager.messiness += 3;
+                state = 4;
+                //CHANGE SPRITE TO DYING ANIMATION HERE
+                sound.PlayOneShot(slain);
+            }
+            else
+            {
+                sound.PlayOneShot(struck);
+            }
         }
     }
 
