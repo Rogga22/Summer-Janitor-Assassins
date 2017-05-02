@@ -6,6 +6,10 @@ public class Cleaning : MonoBehaviour {
 
     public PlayerController play;
     bool iscleaning;
+    bool overbody;
+    bool carrying;
+    bool nearhide;
+    GameObject body;
     public LayerMask enemyHitbox;
     GameManager manager;
 
@@ -17,7 +21,7 @@ public class Cleaning : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
+        if (Input.GetKeyDown(KeyCode.X)) //Does an attack, put attack animation in here
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
             Debug.Log("attack");
@@ -31,7 +35,7 @@ public class Cleaning : MonoBehaviour {
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.V)) //activates cleaning, needs animation
+        if(Input.GetKeyDown(KeyCode.V) && !carrying) //activates cleaning, needs animation
         {
                 play.movespd = play.slowspd;
                 iscleaning = true;
@@ -41,6 +45,34 @@ public class Cleaning : MonoBehaviour {
         {
             play.movespd = play.maxspd;
             iscleaning = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.S) && !iscleaning && !carrying)
+        {
+            carrying = true;
+        }
+
+        if (carrying)
+        {
+            play.onfloor = false;
+            body.transform.position = play.transform.position;
+            play.movespd = play.maxspd / 2;
+            if (Input.GetKeyDown(KeyCode.D) && !nearhide)
+            {
+                body.transform.position = new Vector3(body.transform.position.x, body.transform.position.y - .8f, body.transform.position.z);
+                carrying = false;
+                overbody = false;
+                play.onfloor = true;
+                play.movespd = play.maxspd;
+            }
+            if (Input.GetKeyDown(KeyCode.D) && nearhide)
+            {
+                Destroy(body);
+                carrying = false;
+                overbody = false;
+                play.onfloor = true;
+                play.movespd = play.maxspd;
+            }
         }
     }
 
@@ -56,4 +88,42 @@ public class Cleaning : MonoBehaviour {
             }
         }
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Trash" && !carrying)
+        {
+            overbody = true;
+            body = other.gameObject;
+        }
+        if (other.gameObject.tag == "Disposal")
+        {
+            nearhide = true;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Trash")
+        {
+            overbody = false;
+        }
+        if (other.gameObject.tag == "Disposal")
+        {
+            nearhide = false;
+        }
+    }
 }
+
+        if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
+        {
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
+            Debug.Log("attack");
+            foreach (Collider2D c in colliders)
+            {
+                EnemyController enemy = c.gameObject.GetComponent<EnemyController>();
+                if (enemy != null)
+                {
+                    enemy.hit();
+                }
+            }
