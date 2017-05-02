@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     public float movespd;
     public float slowspd;
     public float jmp;
-    bool onfloor;
+    public bool onfloor;
 
     // Use this for initialization
     void Start()
