@@ -25,6 +25,7 @@ public class EnemyController : MonoBehaviour {
     public AudioClip slain;
     public AudioClip blocked;
     private AudioSource sound;
+    Vector3 deadPos;
 
     public Sprite idleRight;
     public Sprite idleLeft;
@@ -245,6 +246,9 @@ public class EnemyController : MonoBehaviour {
                 manager.messiness += 3;
                 state = 4;
                 GetComponent<SpriteRenderer>().sprite = dead;
+                deadPos = transform.position;
+                deadPos.y -= 1f;
+                transform.position = deadPos;
                 transform.gameObject.tag = "Trash";
                 //CHANGE SPRITE TO DYING ANIMATION HERE
                 sound.PlayOneShot(slain);

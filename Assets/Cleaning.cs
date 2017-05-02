@@ -12,6 +12,7 @@ public class Cleaning : MonoBehaviour {
     GameObject body;
     public LayerMask enemyHitbox;
     GameManager manager;
+    bool attacking = false;
 
     float attackRecovery = 0;
 
@@ -28,9 +29,11 @@ public class Cleaning : MonoBehaviour {
             if (attackRecovery > 0)
             {
                 attackRecovery -= Time.deltaTime;
+
             }
-            else
+            else if (attacking)
             {
+                attacking = false;
                 play.actions = false;
                 if (play.faceRight)
                 {
@@ -44,6 +47,7 @@ public class Cleaning : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
             {
                 play.parrying = false;
+                attacking = true;
                 play.actions = true;
                 if (play.faceRight)
                 {
@@ -55,7 +59,7 @@ public class Cleaning : MonoBehaviour {
                 }
                 attackRecovery = 0.3f;
                 Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
-                Debug.Log("attack");
+                //Debug.Log("attack");
                 foreach (Collider2D c in colliders)
                 {
                     EnemyController enemy = c.gameObject.GetComponent<EnemyController>();
@@ -96,11 +100,9 @@ public class Cleaning : MonoBehaviour {
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.S) && !iscleaning && !carrying)
+            if (Input.GetKeyDown(KeyCode.S) && !iscleaning && !carrying && overbody)
             {
                 carrying = true;
-                if (overbody)
-                {
                     play.actions = true;
                     body.GetComponent<SpriteRenderer>().color = Color.clear;
                     if (play.faceRight)
@@ -111,7 +113,6 @@ public class Cleaning : MonoBehaviour {
                     {
                         play.GetComponent<SpriteRenderer>().sprite = play.carryingLeft;
                     }
-                }
             }
 
             if (carrying)

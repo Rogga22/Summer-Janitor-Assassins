@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public bool parrying = false;
 
     public bool lose = false;
+    Vector3 deadPos;
 
     public AudioClip parrySound;
     public AudioClip deathSound;
@@ -53,6 +54,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(actions);
         if (!lose)
         {
             Vector2 move = RB.velocity;
@@ -97,6 +99,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.C) && parryCooldown <= 0)
             {
+                actions = true;
                 parrying = true;
                 parryTimer = 0.5f;
                 parryCooldown = 1.5f;
@@ -120,6 +123,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (parryTimer <= 0 && parrying)
             {
+                actions = false;
                 parrying = false;
                 if (faceRight)
                 {
@@ -163,6 +167,9 @@ public class PlayerController : MonoBehaviour
             else
             {
                 GetComponent<SpriteRenderer>().sprite = dead;
+                deadPos = transform.position;
+                deadPos.y -= 1f;
+                transform.position = deadPos;
                 lose = true;
                 sound.PlayOneShot(deathSound);
                 return false;
