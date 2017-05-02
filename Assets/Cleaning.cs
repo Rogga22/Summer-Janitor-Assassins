@@ -23,106 +23,121 @@ public class Cleaning : MonoBehaviour {
 
     void Update()
     {
-        if(attackRecovery > 0)
+        if (!play.lose)
         {
-            attackRecovery -= Time.deltaTime;
-        }
-        else
-        {
-            if (play.faceRight)
+            if (attackRecovery > 0)
             {
-                play.GetComponent<SpriteRenderer>().sprite = play.idleRight;
+                attackRecovery -= Time.deltaTime;
             }
             else
             {
-                play.GetComponent<SpriteRenderer>().sprite = play.idleLeft;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
-        {
-            play.parrying = false;
-            if (play.faceRight)
-            {
-                play.GetComponent<SpriteRenderer>().sprite = play.attackRight;
-            }
-            else
-            {
-                play.GetComponent<SpriteRenderer>().sprite = play.attackLeft;
-            }
-            attackRecovery = 0.3f;
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
-            Debug.Log("attack");
-            foreach (Collider2D c in colliders)
-            {
-                EnemyController enemy = c.gameObject.GetComponent<EnemyController>();
-                if (enemy != null)
+                play.actions = false;
+                if (play.faceRight)
                 {
-                    enemy.hit();
+                    play.GetComponent<SpriteRenderer>().sprite = play.idleRight;
+                }
+                else
+                {
+                    play.GetComponent<SpriteRenderer>().sprite = play.idleLeft;
                 }
             }
-        }
+            if (Input.GetKeyDown(KeyCode.X) && !play.parrying) //Does an attack, put attack animation in here
+            {
+                play.parrying = false;
+                play.actions = true;
+                if (play.faceRight)
+                {
+                    play.GetComponent<SpriteRenderer>().sprite = play.attackRight;
+                }
+                else
+                {
+                    play.GetComponent<SpriteRenderer>().sprite = play.attackLeft;
+                }
+                attackRecovery = 0.3f;
+                Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2, enemyHitbox);
+                Debug.Log("attack");
+                foreach (Collider2D c in colliders)
+                {
+                    EnemyController enemy = c.gameObject.GetComponent<EnemyController>();
+                    if (enemy != null)
+                    {
+                        enemy.hit();
+                    }
+                }
+            }
 
-        if(Input.GetKeyDown(KeyCode.V) && !carrying) //activates cleaning, needs animation
-        {
+            if (Input.GetKeyDown(KeyCode.V) && !carrying) //activates cleaning, needs animation
+            {
                 play.movespd = play.slowspd;
                 iscleaning = true;
-            if (play.faceRight)
-            {
-                play.GetComponent<SpriteRenderer>().sprite = play.cleanRight;
+                play.actions = true;
+                if (play.faceRight)
+                {
+                    play.GetComponent<SpriteRenderer>().sprite = play.cleanRight;
+                }
+                else
+                {
+                    play.GetComponent<SpriteRenderer>().sprite = play.cleanLeft;
+                }
             }
-            else
-            {
-                play.GetComponent<SpriteRenderer>().sprite = play.cleanLeft;
-            }
-        }
 
-        if (Input.GetKeyUp(KeyCode.V))
-        {
-            play.movespd = play.maxspd;
-            iscleaning = false;
-            if (play.faceRight)
+            if (Input.GetKeyUp(KeyCode.V))
             {
-                play.GetComponent<SpriteRenderer>().sprite = play.idleRight;
-            }
-            else
-            {
-                play.GetComponent<SpriteRenderer>().sprite = play.idleLeft;
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.S) && !iscleaning && !carrying)
-        {
-            carrying = true;
-            if (play.faceRight)
-            {
-                play.GetComponent<SpriteRenderer>().sprite = play.carryingRight;
-            }
-            else
-            {
-                play.GetComponent<SpriteRenderer>().sprite = play.carryingLeft;
-            }
-        }
-
-        if (carrying)
-        {
-            play.onfloor = false;
-            body.transform.position = play.transform.position;
-            play.movespd = play.maxspd / 2;
-            if (Input.GetKeyDown(KeyCode.D) && !nearhide)
-            {
-                body.transform.position = new Vector3(body.transform.position.x, body.transform.position.y - .8f, body.transform.position.z);
-                carrying = false;
-                overbody = false;
-                play.onfloor = true;
                 play.movespd = play.maxspd;
+                iscleaning = false;
+                play.actions = false;
+                if (play.faceRight)
+                {
+                    play.GetComponent<SpriteRenderer>().sprite = play.idleRight;
+                }
+                else
+                {
+                    play.GetComponent<SpriteRenderer>().sprite = play.idleLeft;
+                }
             }
-            if (Input.GetKeyDown(KeyCode.D) && nearhide)
+
+            if (Input.GetKeyDown(KeyCode.S) && !iscleaning && !carrying)
             {
-                Destroy(body);
-                carrying = false;
-                overbody = false;
-                play.onfloor = true;
-                play.movespd = play.maxspd;
+                carrying = true;
+                if (overbody)
+                {
+                    play.actions = true;
+                    body.GetComponent<SpriteRenderer>().color = Color.clear;
+                    if (play.faceRight)
+                    {
+                        play.GetComponent<SpriteRenderer>().sprite = play.carryingRight;
+                    }
+                    else
+                    {
+                        play.GetComponent<SpriteRenderer>().sprite = play.carryingLeft;
+                    }
+                }
+            }
+
+            if (carrying)
+            {
+                play.onfloor = false;
+                body.transform.position = play.transform.position;
+                play.movespd = play.maxspd / 2;
+                if (Input.GetKeyDown(KeyCode.D) && !nearhide)
+                {
+                    play.actions = false;
+                    body.transform.position = new Vector3(body.transform.position.x, body.transform.position.y - .8f, body.transform.position.z);
+                    carrying = false;
+                    overbody = false;
+                    play.onfloor = true;
+                    play.movespd = play.maxspd;
+                    body.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+                if (Input.GetKeyDown(KeyCode.D) && nearhide)
+                {
+                    play.actions = false;
+                    Destroy(body);
+                    carrying = false;
+                    overbody = false;
+                    play.onfloor = true;
+                    play.movespd = play.maxspd;
+                }
             }
         }
     }

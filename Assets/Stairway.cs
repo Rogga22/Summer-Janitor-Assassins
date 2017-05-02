@@ -15,7 +15,7 @@ public class Stairway : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.UpArrow) && inrange) {
+		if (Input.GetKeyUp(KeyCode.UpArrow) && inrange) {
             player.transform.position = exit.transform.position;
         }
 

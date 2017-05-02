@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float jmp;
     public bool onfloor;
     public bool faceRight = true;
+    public bool actions = false;
 
     float parryCooldown = 0;
     float parryTimer = 0;
@@ -58,6 +59,8 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 faceRight = false;
+                if(!actions)
+                    GetComponent<SpriteRenderer>().sprite = walkLeft;
                 if (move.x > 0)
                     move.x = 0;
                 move.x = Mathf.Lerp(move.x, -movespd, 0.1f);
@@ -66,13 +69,25 @@ public class PlayerController : MonoBehaviour
             else if (Input.GetKey(KeyCode.RightArrow))
             {
                 faceRight = true;
+                if (!actions)
+                    GetComponent<SpriteRenderer>().sprite = walkRight;
                 if (move.x < 0)
                     move.x = 0;
                 move.x = Mathf.Lerp(move.x, movespd, 0.1f);
                 transform.localRotation = Quaternion.Euler(0, 0, 0);
             }
             else
+            {
                 move.x = Mathf.Lerp(move.x, 0, 0.1f);
+                if(faceRight && !actions)
+                {
+                    GetComponent<SpriteRenderer>().sprite = idleRight;
+                }
+                else if(!actions)
+                {
+                    GetComponent<SpriteRenderer>().sprite = idleLeft;
+                }
+            }
             if (Input.GetKeyDown(KeyCode.Z) && onfloor == true)
             {
                 move.y = jmp;
@@ -103,7 +118,7 @@ public class PlayerController : MonoBehaviour
             {
                 parryTimer -= Time.deltaTime;
             }
-            else if (parryTimer <= 0)
+            else if (parryTimer <= 0 && parrying)
             {
                 parrying = false;
                 if (faceRight)

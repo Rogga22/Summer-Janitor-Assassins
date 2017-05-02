@@ -1,11 +1,12 @@
 fileFormatVersion: 2
-guid: 920c2d5f00ef7452cb32f83460ed8784
-timeCreated: 1493711376
+guid: 6ac0eb48416aff34fa56df1e47d58564
+timeCreated: 1493711182
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: janitor right idle (1)_0
-    21300002: janitor right idle (1)_1
+    21300000: EnemyAttackRight_0
+    21300002: EnemyAttackRight_1
+    21300004: EnemyAttackRight_2
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -72,26 +73,39 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: janitor right idle (1)_0
+      name: EnemyAttackRight_0
       rect:
         serializedVersion: 2
-        x: 153
-        y: 663
-        width: 221
-        height: 306
+        x: 119
+        y: 569
+        width: 227
+        height: 317
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: janitor right idle (1)_1
+      name: EnemyAttackRight_1
       rect:
         serializedVersion: 2
-        x: 153
-        y: 119
-        width: 221
-        height: 306
+        x: 614
+        y: 569
+        width: 212
+        height: 317
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyAttackRight_2
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 89
+        width: 227
+        height: 317
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
